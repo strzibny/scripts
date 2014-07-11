@@ -1,0 +1,20 @@
+#!/usr/bin/ruby
+# Unpack SRPM and check spec with rpmlint
+#
+# Usage:
+#   ./srpm-check rubygem-foo
+puts 'Checking... ', ARGV[0]
+arg = ARGV[0]
+srpm = `find . -name *#{arg}*.src.rpm`
+srpm.gsub!(/\n/,'')
+puts srpm
+
+# Extract and list files
+cmd = "rpm2cpio #{srpm} | cpio -ivd > cpio"
+puts cmd
+system(cmd)
+
+# Use rpmlint to check the spec
+spec = `find . -name *#{arg}*.spec`
+spec.gsub!(/\n/,'')
+system("rpmlint #{spec}")

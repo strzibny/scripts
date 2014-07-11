@@ -1,0 +1,18 @@
+#!/usr/bin/ruby
+# Download RPM files using wget
+# from a given web page (such as Koji)
+#
+# Usage:
+#  ./download-rpms WEB_PAGE
+require 'nokogiri'
+files = []
+doc = Nokogiri::HTML(open(ARGV[0]))
+doc.css('a').each do |link|
+  file = link['href']
+  if file =~ /.*\.rpm/
+    puts "Will download: #{file}"
+    files < file
+  end
+end
+
+files.each { |f| `wget #{f}`}
