@@ -1,0 +1,24 @@
+#!/usr/bin/ruby
+# Check if all dependencies of the specified gem are 
+# already present in Fedora to know we can package it
+#
+# Usage:
+#   ./check_fedora_deps GEM_NAME
+require 'polisher'
+
+gem_name = ARGV.shift
+
+gem = Polisher::Gem.retrieve(gem_name)
+puts 'No dependencies' if gem.deps.empty?
+
+gem.deps.each do |dep|
+  puts "Checking #{dep.name}..."
+  fedora_versions = Polisher::Fedora.versions_for(dep.name)
+  unless fedora_versions.empty?
+    fedora_versions.uniq.each do |v|
+      puts "-> #{v}"
+    end
+  else
+    puts "-> Missing #{dep.name}" 
+  end
+end
