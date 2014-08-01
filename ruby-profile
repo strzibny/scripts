@@ -4,5 +4,4 @@
 # Usage:
 #   ./ruby-profile RUBY_PROGRAM
 CPUPROFILE_REALTIME=1 CPUPROFILE=/tmp/.curr_ruby_profile RUBYOPT="-r`gem which perftools | tail -1`" $*
-Successfully installed gem-compare-0.0.2
 pprof.rb --text /tmp/.curr_ruby_profile
