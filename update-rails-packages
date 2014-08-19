@@ -4,9 +4,10 @@
 # ~/fedora-packages/rubygem-$gem
 #
 # Usage:
-#   ./update-rails-packages OLD_VERSION NEW_VERSION
+#   ./update-rails-packages OLD_VERSION NEW_VERSION [FEDORA_RELEASE]
 OLD=$1
 NEW=$2
+FEDORA=$3
 
 gems=(activesupport activemodel activerecord actionview actionpack actionmailer railties rails)
 
@@ -22,7 +23,11 @@ do
   fi
 
   git pull
-  git checkout master
+  if [ ! $FEDORA ]; then
+    git checkout master
+  else
+    git checkout $FEDORA
+  fi
   gem fetch $gem --version $NEW
 
   sed -i -e "s/git checkout v$OLD/git checkout v$NEW/" rubygem-$gem.spec
@@ -36,5 +41,10 @@ do
   CHANGELOG+="- Update to $gem $NEW"
 
   sed -i -e "s/%changelog/%changelog\n$CHANGELOG\n/g" rubygem-$gem.spec
+
+  git rm $gem-$OLD-tests.tgz
+  git add $gem-$NEW-tests.tgz
+
+  git commit -am "Update to $NEW"
 done
 
