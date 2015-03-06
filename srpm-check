@@ -1,5 +1,8 @@
 #!/usr/bin/ruby
-# Unpack SRPM and check spec with rpmlint
+# Unpack SRPM and check package
+#   spec with rpmlint
+#   licenses with licorice and greps
+#   crypto with greps
 #
 # Usage:
 #   ./srpm-check rubygem-foo
@@ -15,6 +18,20 @@ puts cmd
 system(cmd)
 
 # Use rpmlint to check the spec
-spec = `find . -name *#{arg}*.spec`
-spec.gsub!(/\n/,'')
-system("rpmlint #{spec}")
+#spec = `find . -name *#{arg}*.spec`
+#spec.gsub!(/\n/,'')
+#system("rpmlint #{spec}")
+puts "find . -name '#{arg.gsub('rh-ror41-rubygem-','')}*.gem'"
+gem = `find . -name '#{arg.gsub('rh-ror41-rubygem-','')}*.gem'`
+gem.gsub!(/\n/,'')
+unpacked = "#{gem}-unpacked"
+puts gem
+puts ''
+puts '=== LICENSES =========================='
+puts `~/projects/licorice/lico-devel #{gem}`
+puts ''
+puts `grep -Hinr -E 'license|licence|copyright|Apache-2.0|BSD|GPL|MIT|ASL|Public Domain' #{unpacked} --color=always`
+puts ''
+puts '=== CRYPTO ============================'
+puts unpacked
+puts `grep -Hinr -E 'Digest|SHA|MD4|MD5|SSL|TLS|AES|Blowfish|RC2|RC5|SEED|3DES|3-Way|CAST-|GOST|IDEA|Adler|CRC|Tiger|RIPEMD' #{unpacked} --color=always`

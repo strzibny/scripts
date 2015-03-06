@@ -6,6 +6,8 @@
 #  ./download-rpms WEB_PAGE
 require 'nokogiri'
 files = []
+puts "Downloading from... #{ARGV[0]}"
+puts open(ARGV[0])
 doc = Nokogiri::HTML(open(ARGV[0]))
 doc.css('a').each do |link|
   file = link['href']
